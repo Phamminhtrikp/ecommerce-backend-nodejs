@@ -1,9 +1,10 @@
+
+require('dotenv').config();
 const express = require('express');
 const morgan = require('morgan');
 const helmet = require('helmet');
 const compression = require('compression');
 const app = express();
-
 
 
 // Init middleware
@@ -17,8 +18,8 @@ app.use(compression());
 
 // Init db
 require('./dbs/init.mongodb');
-const { checkOverload } = require('./helpers/check.connect');
-checkOverload();
+// const { checkOverload } = require('./helpers/check.connect');
+// checkOverload();
 
 // Init routes
 app.get('/', (req, res, next) => {

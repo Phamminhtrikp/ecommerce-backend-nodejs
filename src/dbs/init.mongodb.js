@@ -7,7 +7,6 @@ const { countConnect } = require('../helpers/check.connect');
 // const connectString = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@shopdev.fnvovvg.mongodb.net/?retryWrites=true&w=majority&appName=shopDev`;
 const connectString = `mongodb://${host}:${port}/${name}`;
 
-console.log('ConnectionString', connectString);
 class Database {
     constructor() {
         this._connect();

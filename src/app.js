@@ -15,6 +15,8 @@ app.use(morgan('dev'));
 // app.use(morgan('tiny'));
 app.use(helmet());
 app.use(compression());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Init db
 require('./dbs/init.mongodb');
@@ -22,14 +24,7 @@ require('./dbs/init.mongodb');
 // checkOverload();
 
 // Init routes
-app.get('/', (req, res, next) => {
-    const strCompression = 'Hello World!';
-
-    return res.status(200).json({ 
-        message: 'Welcome to the e-commerce API',
-        metadata: strCompression.repeat(100000),
-    });
-});
+app.use('/', require('./routes'));
 
 // Handle errors
 

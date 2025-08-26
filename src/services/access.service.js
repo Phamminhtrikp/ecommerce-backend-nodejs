@@ -6,7 +6,8 @@ const crypto = require('crypto');
 const KeyTokenService = require('./keyToken.service');
 const { createTokenPair } = require('../auth/authUtils');
 const { getInfoData } = require('../utils');
-const { ConflictRequestError, InternalServerRequestError } = require('../core/error.resoponse');
+const { ConflictRequestError, InternalServerRequestError, UnauthorizedRequestError } = require('../core/error.resoponse');
+const { findByEmail } = require('./shop.service');
 
 const RoleShop = {
     SHOP: 'SHOP',
@@ -17,9 +18,50 @@ const RoleShop = {
 
 class AccessService {
 
+    static login = async ({ email, password, refreshToken = null }) => {
+        // Check email in dbs
+        const foundShop = await findByEmail({ email });
+        if (!foundShop) {
+            throw new UnauthorizedRequestError('Authentication failed! Email or password is incorrect. Please try again.');
+        }
+
+        // Check match password
+        const match = await bcrypt.compare(password, foundShop.password);
+        if (!match) {
+            throw new UnauthorizedRequestError('Authentication failed! Email or password is incorrect. Please try again.');
+        }
+
+        // Create access token and refresh token
+        const privateKey = crypto.randomBytes(64).toString('hex');
+        const publicKey = crypto.randomBytes(64).toString('hex');
+
+        // Generate tokens
+        const { _id: userId } = foundShop;
+        const tokens = await createTokenPair(
+            { userId, email },
+            publicKey,
+            privateKey
+        );
+
+        await KeyTokenService.createKeyToken({
+            userId,
+            refreshToken: tokens.refreshToken,
+            publicKey,
+            privateKey,
+        });
+        // Get data return login
+        return {
+            shop: getInfoData({
+                fields: ['_id', 'name', 'email'],
+                object: foundShop
+            }),
+            tokens
+        }
+    }
+
     static signUp = async ({ name, email, password }) => {
         // Check email exists
-        const holderShop = await shopModel.findOne({ email }).lean();
+        const holderShop = await findByEmail({ email });
         if (holderShop) {
             throw new ConflictRequestError('Shop already registered!');
         }

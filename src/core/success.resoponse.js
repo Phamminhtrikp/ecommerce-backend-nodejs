@@ -1,19 +1,12 @@
 'use strict';
 
-const StatusCode = {
-    OK: 200,
-    CREATED: 201,
-    ACCEPTED: 202
-}
-
-const ReasonStatusCode = {
-    OK: 'OK',
-    CREATED: 'Created',
-    ACCEPTED: 'Accepted'
-}
+const {
+    StatusCodes,
+    ReasonPhrases
+} = require('../utils/httpStatusCode');
 
 class SuccessResponse {
-    constructor(message, statusCode = StatusCode.OK, reasonStatusCode = ReasonStatusCode.OK, metadata = {}) {
+    constructor({message, statusCode = StatusCodes.OK, reasonStatusCode = ReasonPhrases.OK, metadata = {}}) {
         this.message = !message ? reasonStatusCode : message;
         this.status = statusCode;
         this.metadata = metadata;
@@ -25,25 +18,26 @@ class SuccessResponse {
 }
 
 class OK extends SuccessResponse {
-    constructor({ message, metadata }) {
-        super(message, metadata);
+    constructor({ message, statusCode = StatusCodes.OK, reasonStatusCode = ReasonPhrases.OK, metadata }) {
+        super({ message, statusCode, reasonStatusCode, metadata });
     }
 }
 
 class CREATED extends SuccessResponse {
-    constructor({ options = {}, message, statusCode = StatusCode.CREATED, reasonStatusCode = ReasonStatusCode.CREATED, metadata }) {
+    constructor({ options = {}, message, statusCode = StatusCodes.CREATED, reasonStatusCode = ReasonPhrases.CREATED, metadata }) {
         super(message, statusCode, reasonStatusCode, metadata);
         this.options = options;
     }
 }
 
 class ACCEPTED extends SuccessResponse {
-    constructor({ message, statusCode = StatusCode.ACCEPTED, reasonStatusCode = ReasonStatusCode.ACCEPTED, metadata }) {
+    constructor({ message, statusCode = StatusCodes.ACCEPTED, reasonStatusCode = ReasonPhrases.ACCEPTED, metadata }) {
         super(message, statusCode, reasonStatusCode, metadata);
     }
 }
 
 module.exports = {
+    SuccessResponse,
     OK,
     CREATED,
     ACCEPTED

@@ -1,8 +1,10 @@
 @url_dev=http://localhost:3004/v1/api/
+@api_key=3b59642d4a6c280c75c0d02eff0006e559deec3842f1f100ce7fdeb09b7e04375e209409056b20da44f35a1d6aeb19da98fc15815499c4f1111f58a4484c8a6b
 
 ### signup
 POST {{url_dev}}shop/signup
 Content-Type: application/json
+x-api-key: {{api_key}}
 
 {
     "name": "Shop Dev",

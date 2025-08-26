@@ -1,5 +1,6 @@
 'use strict';
 
+const { toObjectId } = require('../helpers/toObjectId');
 const keytokenModel = require('../models/keytoken.model');
 
 class KeyTokenService {
@@ -25,6 +26,19 @@ class KeyTokenService {
         } catch (error) {
             return error;
         }
+    }
+
+    static findByUserId = async (userId) => {
+
+        return await keytokenModel.findOne({ user: toObjectId(userId) }).lean();
+    }
+
+    static removeKeyById = async (id) => {
+        return await keytokenModel.deleteOne({ _id: id });
+    }
+
+    static findByRefreshTokenUsed = async (refreshToken) => {
+        return await keytokenModel.findOne({ refreshTokensUsed: refreshToken }).lean();
     }
 }
 

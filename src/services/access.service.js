@@ -6,7 +6,7 @@ const crypto = require('crypto');
 const KeyTokenService = require('./keyToken.service');
 const { createTokenPair } = require('../auth/authUtils');
 const { getInfoData } = require('../utils');
-const { ConflictRequestError, InternalServerRequestError, UnauthorizedRequestError } = require('../core/error.resoponse');
+const { ConflictError, InternalServerError, UnauthorizedError } = require('../core/error.resoponse');
 const { findByEmail } = require('./shop.service');
 
 const RoleShop = {
@@ -18,17 +18,24 @@ const RoleShop = {
 
 class AccessService {
 
+
+    static logout = async ({ keyStore }) => {
+        const delKey = await KeyTokenService.removeKeyById( keyStore._id );
+        console.log({delKey});
+        return delKey;
+    }
+
     static login = async ({ email, password, refreshToken = null }) => {
         // Check email in dbs
         const foundShop = await findByEmail({ email });
         if (!foundShop) {
-            throw new UnauthorizedRequestError('Authentication failed! Email or password is incorrect. Please try again.');
+            throw new UnauthorizedError('Authentication failed! Email or password is incorrect. Please try again.');
         }
 
         // Check match password
         const match = await bcrypt.compare(password, foundShop.password);
         if (!match) {
-            throw new UnauthorizedRequestError('Authentication failed! Email or password is incorrect. Please try again.');
+            throw new UnauthorizedError('Authentication failed! Email or password is incorrect. Please try again.');
         }
 
         // Create access token and refresh token
@@ -63,7 +70,7 @@ class AccessService {
         // Check email exists
         const holderShop = await findByEmail({ email });
         if (holderShop) {
-            throw new ConflictRequestError('Shop already registered!');
+            throw new ConflictError('Shop already registered!');
         }
 
         // Hash password & create shop
@@ -76,7 +83,7 @@ class AccessService {
         });
 
         if (!newShop) {
-            throw new InternalServerRequestError('Error creating new shop');
+            throw new InternalServerError('Error creating new shop');
         }
 
         // Generate key pair
@@ -91,7 +98,7 @@ class AccessService {
         });
 
         if (!keyStore) {
-            throw new InternalServerRequestError('Failed to create keyStore');
+            throw new InternalServerError('Failed to create keyStore');
         }
 
         // Generate tokens

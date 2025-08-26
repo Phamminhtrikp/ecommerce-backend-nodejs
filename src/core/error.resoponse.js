@@ -18,25 +18,31 @@ class BadRequestError extends ErrorResponse {
     }
 }
 
-class UnauthorizedRequestError extends ErrorResponse {
+class UnauthorizedError extends ErrorResponse {
     constructor(message = ReasonPhrases.UNAUTHORIZED, statusCode = StatusCodes.UNAUTHORIZED) {
         super(message, statusCode);
     }
 }
 
-class ForbiddenRequestError extends ErrorResponse {
+class ForbiddenError extends ErrorResponse {
     constructor(message = ReasonPhrases.FORBIDDEN, statusCode = StatusCodes.FORBIDDEN) {
         super(message, statusCode);
     }
 }
 
-class ConflictRequestError extends ErrorResponse {
+class NotFoundError extends ErrorResponse {
+    constructor(message = ReasonPhrases.NOT_FOUND, statusCode = StatusCodes.NOT_FOUND) {
+        super(message, statusCode);
+    }
+}
+
+class ConflictError extends ErrorResponse {
     constructor(message = ReasonPhrases.CONFLICT, statusCode = StatusCodes.CONFLICT) {
         super(message, statusCode);
     }
 }
 
-class InternalServerRequestError extends ErrorResponse {
+class InternalServerError extends ErrorResponse {
     constructor(message = ReasonPhrases.INTERNAL_SERVER_ERROR, statusCode = StatusCodes.INTERNAL_SERVER_ERROR) {
         super(message, statusCode);
     }
@@ -44,8 +50,9 @@ class InternalServerRequestError extends ErrorResponse {
 
 module.exports = {
     BadRequestError,
-    UnauthorizedRequestError,
-    ForbiddenRequestError,
-    ConflictRequestError,
-    InternalServerRequestError
+    UnauthorizedError,
+    ForbiddenError,
+    NotFoundError,
+    ConflictError,
+    InternalServerError
 };

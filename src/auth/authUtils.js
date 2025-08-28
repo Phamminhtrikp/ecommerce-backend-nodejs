@@ -118,6 +118,7 @@ const authenticationV2 = asyncHandler(async (req, res, next) => {
             throw new UnauthorizedError('Invalid User');
         }
         req.keyStore = keyStore;
+        req.user = decodedUser;
         return next();
     } catch (error) {
         throw error;
